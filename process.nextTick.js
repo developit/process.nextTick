@@ -4,12 +4,11 @@
  */
 
 process.nextTick = (function() {
-	var img = new Image(),
+	var img,
 		queue = [],
 		noArgs = [],
 		pm = !!window.postMessage,
-		slice = Array.prototype.slice,
-		dataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		slice = Array.prototype.slice;
 	function tick() {
 		var len = queue.length,
 			q = queue.splice(0, len),
@@ -18,7 +17,6 @@ process.nextTick = (function() {
 			q[i].apply(process, q[i+1]);
 		}
 	}
-	img.onload = img.onerror = tick;
 	window.addEventListener('message', tick);
 	return function nextTick(callback) {
 		var args = noArgs;
@@ -31,8 +29,9 @@ process.nextTick = (function() {
 				window.postMessage(' ', '*');
 			}
 			else {
+				img = new Image();
+				img.onerror = tick;
 				img.src = '';
-				img.src = dataUri;
 			}
 		}
 	};
